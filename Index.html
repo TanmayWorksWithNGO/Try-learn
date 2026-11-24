@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TRY Learn – Free lessons for Classes 1 to 4</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f3f8ff;--ink:#1b2540;--sun:#ffc233;--leaf:#26a269;--grape:#5b4bd6;--card:#fff;--mut:#5d6785;--bd:#dbe5f5}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:19px/1.45 "Baloo 2",system-ui,sans-serif}
+main{max-width:620px;margin:0 auto;padding:14px 14px 40px}
+h1,h2,h3{margin:.2em 0;line-height:1.15}h1{font-size:1.7em;font-weight:800}h2{font-size:1.3em}
+.bar{position:sticky;top:0;z-index:5;background:var(--ink);color:#fff;display:flex;justify-content:space-between;align-items:center;padding:8px 14px}
+.bar b{font-weight:800}.pill{background:#ffffff22;border-radius:20px;padding:2px 12px;margin-left:6px;font-weight:600}
+.card{background:var(--card);border:2px solid var(--bd);border-radius:22px;padding:14px;margin:12px 0}
+.hero{background:var(--sun);border-radius:28px;padding:18px;margin:12px 0}
+.hero p{margin:.2em 0}
+.tiles{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.tile{border:0;border-radius:24px;padding:16px 10px;color:#fff;font:inherit;font-weight:800;font-size:1.15em;cursor:pointer;text-align:center}
+.tile span{display:block;font-size:2.1em;line-height:1.2}.tile small{display:block;font-weight:400;font-size:.7em;opacity:.95}
+button.b{background:var(--grape);color:#fff;border:0;border-radius:16px;padding:12px 20px;font:inherit;font-weight:800;cursor:pointer;margin-top:10px}
+button.g{background:#e9e6ff;color:var(--grape)}
+button.o{display:block;width:100%;text-align:left;background:#fff;color:var(--ink);border:3px solid var(--bd);border-radius:16px;padding:12px;margin:8px 0;font:inherit;cursor:pointer}
+button.o.ok{border-color:var(--leaf);background:#e3f6ea}button.o.no{border-color:#e03131;background:#fde8e8}
+label{display:block;font-weight:600;margin:10px 0 2px}
+input,select{width:100%;padding:12px;border:2px solid var(--bd);border-radius:14px;font:inherit;background:#fff;color:var(--ink)}
+.meter{height:16px;background:#e3eaf7;border-radius:10px;overflow:hidden}.meter i{display:block;height:100%;background:var(--leaf);border-radius:10px}
+.row{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.tabs{display:flex;gap:6px;overflow-x:auto;margin:10px 0}
+.tabs button{flex:1;white-space:nowrap;border:0;background:#e3eaf7;color:var(--ink);border-radius:14px;padding:8px 10px;font:inherit;font-weight:600;cursor:pointer}
+.tabs button.on{background:var(--grape);color:#fff}
+.ch{display:flex;gap:10px;align-items:center;justify-content:space-between;width:100%;text-align:left;background:#fff;border:2px solid var(--bd);border-radius:18px;padding:12px;margin:8px 0;font:inherit;cursor:pointer;color:var(--ink)}
+.mut{color:var(--mut);font-size:.85em}.err{color:#c92a2a;margin-top:8px}
+.back{background:none;border:0;color:var(--grape);font:inherit;font-weight:800;cursor:pointer;padding:6px 0}
+.ans{background:#fff8e1;border-left:6px solid var(--sun);border-radius:12px;padding:10px 12px;margin:8px 0}
+.vid{position:relative;padding-top:56.25%;border-radius:16px;overflow:hidden;background:#000}.vid iframe,.pdf{position:absolute;inset:0;width:100%;height:100%;border:0}
+.pdfw{height:70vh;border-radius:12px;overflow:hidden;border:2px solid var(--bd)}.pdfw iframe{width:100%;height:100%;border:0}
+.empty{text-align:center;color:var(--mut);padding:18px}
+footer{margin-top:24px;font-size:.8em;color:var(--mut);text-align:center}
+@media print{.bar,button,.tabs,footer{display:none}}
+</style></head><body>
+<div id="top"></div><main id="app"></main>
+<script>
+/* ---------- Storage ----------
+   Accounts and progress are saved in this browser for now.
+   When Supabase is ready, replace load() and save() with Supabase calls
+   so progress follows the student to any phone. */
+const KEY="try_learn_v1";
+const Store={load(){try{return JSON.parse(localStorage.getItem(KEY))||{users:{},cur:null}}catch(e){return{users:{},cur:null}}},
+save(d){try{localStorage.setItem(KEY,JSON.stringify(d))}catch(e){}}};
+let DB=Store.load();const save=()=>Store.save(DB);
+const me=()=>DB.users[DB.cur];
+const esc=s=>{const d=document.createElement("div");d.textContent=s==null?"":s;return d.innerHTML};
+async function hash(s){try{const b=await crypto.subtle.digest("SHA-256",new TextEncoder().encode("try-"+s));return[...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,"0")).join("")}catch(e){return btoa(unescape(encodeURIComponent(s)))}}
+
+/* ---------- Content (sample chapters; add more in the same shape) ---------- */
+const SUBJ={Maths:{ic:"🔢",c:"#5b4bd6"},English:{ic:"🔤",c:"#e8590c"},Hindi:{ic:"अ",c:"#d6336c"},EVS:{ic:"🌳",c:"#26a269"}};
+const subjectsFor=g=>g>=3?["English","Hindi","Maths","EVS"]:["English","Hindi","Maths"];
+// v = YouTube video ID (leave "" for none). p = PDF path inside this repo, e.g. "pdfs/class1-maths-ch1.pdf"
+const DATA={
+"1-Maths":[{t:"Counting 1 to 20",v:"",p:"",
+d:[["What comes after 9?","After 9 comes 10."],["How do I count things?","Touch each thing once and say the next number. The last number you say is how many there are."]],
+z:[{q:"What comes after 14?",o:["13","15","16","12"],a:1,e:"14, then 15."},{q:"Which number is bigger?",o:["8","12","5","3"],a:1,e:"12 is bigger than 8, 5 and 3."},{q:"How many fingers are on both hands?",o:["5","8","10","12"],a:2,e:"5 on one hand and 5 on the other makes 10."}],
+w:["Write the number that comes after 19.","Count the fingers on your two hands and write the number.","Write the numbers from 1 to 10.","Circle the bigger number: 7 or 11."]}],
+"1-English":[{t:"Naming words",v:"",p:"",
+d:[["What is a naming word?","A naming word tells the name of a person, place, animal or thing. Examples: boy, school, dog, ball."],["Is 'run' a naming word?","No. 'Run' is an action word. It tells what someone does."]],
+z:[{q:"Which one is a naming word?",o:["run","cat","big","jump"],a:1,e:"Cat is the name of an animal."},{q:"Which word names a place?",o:["school","pencil","happy","sit"],a:0,e:"A school is a place."},{q:"Which word names a thing?",o:["jump","girl","book","park"],a:2,e:"A book is a thing."}],
+w:["Write 3 names of animals.","Write 3 names of things in your bag.","Circle the naming word: sing, tree, red.","Write the name of your school."]}],
+"1-Hindi":[{t:"स्वर (अ से अः)",v:"",p:"",
+d:[["स्वर कितने होते हैं?","हिंदी में 11 स्वर होते हैं: अ आ इ ई उ ऊ ऋ ए ऐ ओ औ।"],["'अ' से कौन-सा शब्द बनता है?","'अ' से अनार बनता है।"]],
+z:[{q:"'अ' से कौन-सा शब्द बनता है?",o:["अनार","आम","इमली","उल्लू"],a:0,e:"अ से अनार।"},{q:"'आ' से कौन-सा शब्द बनता है?",o:["अनार","आम","ईख","ऊन"],a:1,e:"आ से आम।"},{q:"'इ' से कौन-सा शब्द बनता है?",o:["उल्लू","आम","इमली","ऊन"],a:2,e:"इ से इमली।"}],
+w:["स्वर लिखिए: अ, आ, इ, ___, ___","'अ' से शुरू होने वाले दो शब्द लिखिए।","'आ' से शुरू होने वाला एक फल लिखिए।","अपना नाम हिंदी में लिखिए।"]}],
+"3-EVS":[{t:"Plants around us",v:"",p:"",
+d:[["Why do plants need sunlight?","Plants use sunlight, water and air to make their own food."],["What are the parts of a plant?","The main parts are root, stem, leaf and flower."]],
+z:[{q:"Which part holds the plant in the soil?",o:["Leaf","Root","Flower","Fruit"],a:1,e:"Roots hold the plant and take in water."},{q:"Which part makes food for the plant?",o:["Leaf","Root","Stem","Seed"],a:0,e:"Leaves make food using sunlight."},{q:"Which part grows into a fruit?",o:["Root","Leaf","Flower","Stem"],a:2,e:"The flower becomes the fruit."}],
+w:["Draw a plant and name its four parts.","Write 3 plants that grow in your village.","What do plants need to grow? Write 3 things.","Name one plant we eat the root of."]}]
+};
+const chaps=(g,s)=>DATA[g+"-"+s]||[];
+const ckey=(g,s,i)=>g+"-"+s+"-"+i;
+
+/* ---------- State ---------- */
+let V={view:"home",subj:null,ci:0,tab:"learn",q:"",res:null},Z=null,authMode="signup";
+const today=()=>new Date().toDateString();
+function touch(){const u=me();if(u.last===today())return;const y=new Date(Date.now()-864e5).toDateString();u.streak=u.last===y?(u.streak||0)+1:1;u.last=today();save()}
+function progress(u,s){const c=chaps(u.cls,s);if(!c.length)return null;let d=0;c.forEach((_,i)=>{if(u.done[ckey(u.cls,s,i)])d++});return Math.round(d*100/c.length)}
+function overall(u){const l=subjectsFor(u.cls).map(s=>progress(u,s)).filter(x=>x!==null);return l.length?Math.round(l.reduce((a,b)=>a+b,0)/l.length):0}
+
+/* ---------- Views ---------- */
+function render(){const u=me();document.getElementById("top").innerHTML=u?`<div class="bar"><b>Hi ${esc(u.name||DB.cur)}!</b><span>🔥<span class="pill">${u.streak||0}</span> ⭐<span class="pill">${u.stars||0}</span> <button class="back" style="color:#fff" onclick="logout()">Log out</button></span></div>`:"";
+const a=document.getElementById("app");if(!u){a.innerHTML=authView();return}
+a.innerHTML=(V.view==="home"?homeView(u):V.view==="sub"?subView(u):chView(u))+aboutView();window.scrollTo(0,0)}
+function aboutView(){return `<footer><b>TRY – Transforming Rural Youth</b><br>TRY works to bring positive change to rural communities through entrepreneurship, innovation and education awareness. This learning website is our effort to bring free, quality learning to children in rural areas.</footer>`}
+function authView(){const su=authMode==="signup";return `<div class="hero"><h1>TRY Learn 🌱</h1><p>Free lessons for Classes 1 to 4: English, Hindi, Maths and EVS.</p></div>
+<div class="card"><div class="row"><button class="b ${su?"":"g"}" style="flex:1" onclick="authMode='signup';render()">New account</button><button class="b ${su?"g":""}" style="flex:1" onclick="authMode='login';render()">Log in</button></div>
+${su?`<label>Your name</label><input id="nm" autocomplete="off">`:""}<label>Username</label><input id="un" autocapitalize="none" autocomplete="off">
+<label>Password</label><input id="pw" type="password" placeholder="At least 4 characters">
+${su?`<label>Class</label><select id="cl"><option>1</option><option>2</option><option>3</option><option>4</option></select>`:""}
+<button class="b" onclick="auth()">${su?"Create my account":"Log in"}</button><div class="err" id="err"></div>
+<p class="mut">No email or phone number needed. Remember your password: it can’t be recovered.</p></div>`+aboutView()}
+async function auth(){const e=document.getElementById("err"),un=document.getElementById("un").value.trim().toLowerCase(),pw=document.getElementById("pw").value;
+if(!/^[a-z0-9_.]{3,20}$/.test(un)){e.textContent="Username: 3 to 20 letters or numbers, no spaces.";return}if(pw.length<4){e.textContent="Password needs at least 4 characters.";return}
+const h=await hash(un+pw);
+if(authMode==="signup"){if(DB.users[un]){e.textContent="This username is taken. Try another.";return}
+DB.users[un]={name:document.getElementById("nm").value.trim()||un,cls:+document.getElementById("cl").value,h,stars:0,streak:0,last:"",done:{}}}
+else{if(!DB.users[un]||DB.users[un].h!==h){e.textContent="Wrong username or password.";return}}
+DB.cur=un;V={view:"home",subj:null,ci:0,tab:"learn",q:"",res:null};save();render()}
+function logout(){DB.cur=null;save();render()}
+function homeView(u){const sj=subjectsFor(u.cls);
+return `<div class="hero"><h1>Class ${u.cls} 🌞</h1><p>Do one lesson today to keep your fire 🔥 burning!</p></div>
+<div class="card"><div class="row"><b>My syllabus</b><b>${overall(u)}%</b></div><div class="meter"><i style="width:${overall(u)}%"></i></div></div>
+<div class="tiles">${sj.map(s=>{const p=progress(u,s);return `<button class="tile" style="background:${SUBJ[s].c}" onclick="V.view='sub';V.subj='${s}';render()"><span>${SUBJ[s].ic}</span>${s}<small>${p===null?"coming soon":p+"% done"}</small></button>`}).join("")}</div>
+<div class="card"><h2>Ask a doubt 🤔</h2><input id="sq" placeholder="Type your doubt here…" value="${esc(V.q)}" onkeydown="if(event.key==='Enter')search()"><button class="b" onclick="search()">Find answer</button><div id="sr">${V.res!==null?resView(V.res):""}</div></div>`}
+function resView(r){return r.length?r.map(x=>`<div class="ans"><b>${esc(x.q)}</b><br>${esc(x.a)}<div class="mut">${esc(x.from)}</div></div>`).join(""):`<div class="ans">I don’t have an answer for this yet. Please ask your teacher.</div>`}
+function search(){const u=me(),q=document.getElementById("sq").value.trim().toLowerCase();V.q=q;touch();const w=q.split(/\s+/).filter(x=>x.length>2),out=[];
+if(w.length)subjectsFor(u.cls).forEach(s=>chaps(u.cls,s).forEach(c=>c.d.forEach(([dq,da])=>{const t=(dq+" "+da).toLowerCase(),sc=w.filter(x=>t.includes(x)).length;if(sc)out.push({sc,q:dq,a:da,from:s+" · "+c.t})})));
+V.res=out.sort((a,b)=>b.sc-a.sc).slice(0,3);document.getElementById("sr").innerHTML=resView(V.res)}
+function subView(u){const c=chaps(u.cls,V.subj);return `<button class="back" onclick="V.view='home';render()">← Back</button><h1>${SUBJ[V.subj].ic} ${V.subj}</h1>`+
+(c.length?c.map((x,i)=>`<button class="ch" onclick="V.view='ch';V.ci=${i};V.tab='learn';Z=null;render()"><span><b>${esc(x.t)}</b></span><span>${u.done[ckey(u.cls,V.subj,i)]?"✅":"➡️"}</span></button>`).join(""):`<div class="card empty">Chapters for Class ${u.cls} ${V.subj} are coming soon.</div>`)}
+function chView(u){const c=chaps(u.cls,V.subj)[V.ci],k=ckey(u.cls,V.subj,V.ci),T=[["learn","📖 Learn"],["doubt","🤔 Doubts"],["quiz","⭐ Quiz"],["ws","📝 Worksheet"]];
+let b="";
+if(V.tab==="learn")b=`<div class="card"><h2>Video</h2>${c.v?`<div class="vid"><iframe src="https://www.youtube-nocookie.com/embed/${esc(c.v)}?rel=0&modestbranding=1&playsinline=1" allow="encrypted-media;fullscreen" allowfullscreen></iframe></div>`:`<div class="empty">Video coming soon.</div>`}</div>
+<div class="card"><h2>Book (PDF)</h2>${c.p?`<div class="pdfw"><iframe src="${esc(c.p)}"></iframe></div>`:`<div class="empty">PDF coming soon.</div>`}</div>
+<button class="b" onclick="markDone()">${u.done[k]?"✅ Chapter done":"I finished this chapter"}</button>`;
+else if(V.tab==="doubt")b=`<div class="card"><h2>Common doubts</h2>${c.d.map(([q,a])=>`<div class="ans"><b>${esc(q)}</b><br>${esc(a)}</div>`).join("")}</div>`;
+else if(V.tab==="ws")b=`<div class="card"><h2>${esc(c.t)} worksheet</h2><div class="mut">Name: ______ Class ${u.cls}</div><ol>${c.w.map(q=>`<li style="margin:10px 0">${esc(q)}</li>`).join("")}</ol><button class="b g" onclick="window.print()">Print</button></div>`;
+else b=quizView(c);
+return `<button class="back" onclick="V.view='sub';render()">← ${V.subj}</button><h1>${esc(c.t)}</h1><div class="tabs">${T.map(t=>`<button class="${V.tab===t[0]?"on":""}" onclick="V.tab='${t[0]}';Z=null;render()">${t[1]}</button>`).join("")}</div>`+b}
+function markDone(){const u=me(),k=ckey(u.cls,V.subj,V.ci);if(!u.done[k]){u.done[k]=1;u.stars++}touch();save();render()}
+function quizView(c){if(!Z)Z={i:0,s:0,a:null,end:false};
+if(Z.end){const p=Math.round(Z.s*100/c.z.length);return `<div class="card" style="text-align:center"><div style="font-size:3em">${"⭐".repeat(Z.got)}</div><h2>${Z.s} out of ${c.z.length}</h2><p>${p>=80?"Brilliant work!":p>=50?"Good job! Keep practising.":"Good try! Read the lesson and try again."}</p><button class="b" onclick="Z=null;render()">Play again</button></div>`}
+const q=c.z[Z.i];return `<div class="card"><div class="mut">Question ${Z.i+1} of ${c.z.length}</div><h2>${esc(q.q)}</h2>${q.o.map((o,i)=>`<button class="o ${Z.a!=null?(i===q.a?"ok":i===Z.a?"no":""):""}" ${Z.a!=null?"disabled":""} onclick="pick(${i})">${esc(o)}</button>`).join("")}${Z.a!=null?`<div class="ans">${Z.a===q.a?"🎉 Correct! ":"😊 Good try! "}${esc(q.e)}</div><button class="b" onclick="nextQ()">${Z.i+1<c.z.length?"Next":"Finish"}</button>`:""}</div>`}
+function pick(i){const c=chaps(me().cls,V.subj)[V.ci];if(Z.a!=null)return;Z.a=i;if(i===c.z[Z.i].a)Z.s++;touch();render()}
+function nextQ(){const u=me(),c=chaps(u.cls,V.subj)[V.ci];Z.a=null;Z.i++;if(Z.i>=c.z.length){Z.end=true;const p=Z.s/c.z.length;Z.got=p>=.8?3:p>=.5?2:1;u.stars+=Z.got;if(p>=.6)u.done[ckey(u.cls,V.subj,V.ci)]=1;save()}render()}
+render();
+</script></body></html>
